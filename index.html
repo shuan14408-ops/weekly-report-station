@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>畢業專題週報站</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+/* 版面：頂部班級名稱＋週次切換；「全班總覽」左欄學生列表、右欄備料與待處理，窄螢幕疊成一欄。
+   藍筆＝學生與主要操作；紅筆＝老師與需要協助；楷體＝標題與老師回覆。 */
+:root{
+  --paper:#EDF1F5; --surface:#FFFFFF; --field:#F5F7FA;
+  --ink:#172133; --ink-2:#55627A; --rule:#D2DAE4;
+  --pen:#2548B8; --pen-soft:#E3E9FB; --on-pen:#FFFFFF;
+  --red:#C2362B; --red-soft:#FBE8E5; --on-red:#FFFFFF;
+  --amber:#8F5B00; --amber-soft:#FBEFD0;
+  --green:#1C7650; --green-soft:#DCF1E5;
+  --hl:#FFF0B3; --hl-line:#E6CF6A;
+  --kai:"LXGW WenKai TC","BiauKai","DFKai-SB","KaiTi","Kaiti TC",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10161F; --surface:#19212E; --field:#121925;
+    --ink:#E7ECF4; --ink-2:#9BA8BD; --rule:#2D384A;
+    --pen:#93AAFF; --pen-soft:#1E2A4C; --on-pen:#0D1530;
+    --red:#FF8C7F; --red-soft:#3C1E1B; --on-red:#2B0E0B;
+    --amber:#EDB548; --amber-soft:#392B0E;
+    --green:#62D09A; --green-soft:#14342A;
+    --hl:#3A3212; --hl-line:#6D5E1F;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10161F; --surface:#19212E; --field:#121925;
+  --ink:#E7ECF4; --ink-2:#9BA8BD; --rule:#2D384A;
+  --pen:#93AAFF; --pen-soft:#1E2A4C; --on-pen:#0D1530;
+  --red:#FF8C7F; --red-soft:#3C1E1B; --on-red:#2B0E0B;
+  --amber:#EDB548; --amber-soft:#392B0E;
+  --green:#62D09A; --green-soft:#14342A;
+  --hl:#3A3212; --hl-line:#6D5E1F;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--pen);outline-offset:2px}
+h1,h2,h3,p,ul{margin:0}
+ul{padding-left:1.2em}
+
+.wrap{max-width:1160px;margin-inline:auto;padding-inline:clamp(16px,3.2vw,36px);padding-block:22px 72px;display:flex;flex-direction:column;gap:18px}
+.stack{display:flex;flex-direction:column;gap:18px;min-width:0}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+
+/* 頂部 */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.eyebrow{font-size:12.5px;letter-spacing:.14em;color:var(--ink-2)}
+h1{font-family:var(--kai);font-weight:700;font-size:clamp(26px,4vw,34px);line-height:1.25;text-wrap:balance}
+.weekbar{display:flex;align-items:center;gap:6px}
+.weeklabel{display:flex;flex-direction:column;align-items:center;min-width:116px;line-height:1.3}
+.weeklabel strong{font-family:var(--kai);font-size:21px}
+.weeklabel span{font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.iconbtn{width:38px;height:38px;border-radius:50%;border:1px solid var(--rule);background:var(--surface);font-size:19px;line-height:1}
+.iconbtn:hover{border-color:var(--pen);color:var(--pen)}
+.linkbtn{background:none;border:0;padding:2px 4px;color:var(--pen);text-decoration:underline;text-underline-offset:3px}
+
+/* 分頁 */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--rule);overflow-x:auto}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px;font-weight:500;color:var(--ink-2);white-space:nowrap}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-current="page"]{color:var(--pen);border-bottom-color:var(--pen)}
+
+/* 示範資料提示 */
+.banner{background:var(--hl);border:1px solid var(--hl-line);border-radius:8px;padding:9px 14px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;font-size:14px}
+
+/* 四個數字 */
+.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.fig{background:var(--surface);padding:13px 18px 14px;min-width:0}
+.fig .k{font-size:12.5px;color:var(--ink-2);letter-spacing:.04em}
+.fig .v{font-family:var(--kai);font-weight:700;font-size:32px;line-height:1.2;font-variant-numeric:tabular-nums}
+.fig .v small{font-size:17px;font-weight:400;color:var(--ink-2)}
+.fig .s{font-size:12.5px;color:var(--ink-2)}
+.fig.alert .v{color:var(--red)}
+.fig.warn .v{color:var(--amber)}
+@media (max-width:640px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.cols{display:grid;grid-template-columns:minmax(0,1fr) 336px;gap:22px;align-items:start}
+@media (max-width:920px){.cols{grid-template-columns:minmax(0,1fr)}}
+
+.panel{background:var(--surface);border:1px solid var(--rule);border-radius:10px;min-width:0}
+.ph{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 12px;padding:12px 16px;border-bottom:1px solid var(--rule)}
+.ph h2{font-family:var(--kai);font-size:19px;font-weight:700}
+.ph .sub{font-size:12.5px;color:var(--ink-2)}
+.pb{padding:12px 16px 16px;display:flex;flex-direction:column;gap:12px}
+.empty{padding:36px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+.empty h2{font-family:var(--kai);font-size:22px}
+.empty p{color:var(--ink-2);max-width:34em}
+.hint{font-size:13.5px;color:var(--ink-2)}
+.tag{display:inline-block;font-size:11.5px;line-height:1.5;padding:0 6px;border-radius:4px;background:var(--hl);border:1px solid var(--hl-line);color:var(--ink);font-weight:400;vertical-align:middle}
+
+/* 篩選 */
+.filters{display:flex;flex-wrap:wrap;gap:6px;padding:10px 16px;border-bottom:1px solid var(--rule)}
+.chip{border:1px solid var(--rule);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:13.5px;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:var(--pen)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip .n{font-variant-numeric:tabular-nums;opacity:.75}
+.chip.big{padding:8px 16px;font-size:16px}
+.chip .done{font-size:11.5px;opacity:.8}
+
+/* 學生列 */
+.srow{border-top:1px solid var(--rule)}
+.srow:first-of-type{border-top:0}
+.srow>summary{display:grid;grid-template-columns:minmax(76px,auto) minmax(0,1fr) auto auto 16px;grid-template-areas:"who topic track pill chev" "peek peek peek peek peek";gap:4px 14px;align-items:center;padding:12px 16px;list-style:none;cursor:pointer}
+.srow>summary::-webkit-details-marker{display:none}
+.srow>summary:hover{background:var(--field)}
+.who{grid-area:who;display:flex;align-items:center;gap:6px;font-size:16px;white-space:nowrap}
+.topic{grid-area:topic;min-width:0;overflow-wrap:anywhere}
+.track{grid-area:track;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.track .bars{display:inline-flex;gap:3px}
+.track i{width:13px;height:8px;border-radius:2px;background:var(--rule)}
+.track i.on{background:var(--pen)}
+.track i.now{background:var(--pen);box-shadow:0 0 0 2px var(--pen-soft)}
+.track .lbl{font-size:12.5px;color:var(--ink-2);min-width:5.5em}
+.pillcell{grid-area:pill;justify-self:end}
+.chev{grid-area:chev;width:9px;height:9px;border-right:2px solid var(--ink-2);border-bottom:2px solid var(--ink-2);transform:rotate(45deg);transition:transform .15s;justify-self:center;margin-top:-4px}
+.srow[open] .chev{transform:rotate(225deg);margin-top:4px}
+.peek{grid-area:peek;display:flex;flex-wrap:wrap;align-items:center;gap:2px 18px;font-size:13.5px;color:var(--ink-2);min-width:0}
+.peek span{min-width:0;overflow-wrap:anywhere}
+.peek b{font-weight:500;color:var(--ink)}
+@media (max-width:700px){
+  .srow>summary{grid-template-columns:minmax(0,1fr) auto 16px;grid-template-areas:"who pill chev" "topic topic topic" "track track track" "peek peek peek"}
+}
+@media (prefers-reduced-motion:reduce){.chev{transition:none}}
+
+.pill{display:inline-flex;align-items:center;padding:2px 11px;border-radius:999px;font-size:12.5px;font-weight:500;white-space:nowrap;border:1px solid transparent}
+.pill.ok{color:var(--green);background:var(--green-soft)}
+.pill.stuck{color:var(--amber);background:var(--amber-soft)}
+.pill.help{color:var(--on-red);background:var(--red)}
+.pill.none{color:var(--ink-2);border:1px dashed var(--ink-2)}
+.pill.handled{color:var(--ink-2);background:transparent;border:1px solid var(--rule)}
+
+.sbody{padding:4px 16px 18px;display:flex;flex-direction:column;gap:14px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 26px}
+.blk{min-width:0}
+.blk h3{font-size:12.5px;font-weight:500;color:var(--ink-2);letter-spacing:.05em;margin-bottom:3px}
+.blk p{white-space:pre-wrap;overflow-wrap:anywhere}
+.blk li{overflow-wrap:anywhere}
+.blk .out{font-size:13.5px;color:var(--ink-2);white-space:normal}
+.note{border-top:1px dashed var(--rule);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.note .lbl{font-size:12.5px;font-weight:500;color:var(--red);letter-spacing:.05em}
+.redpen{font-family:var(--kai);color:var(--red);font-size:17px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+textarea.redpen{border-color:var(--red)}
+.check{display:inline-flex;align-items:center;gap:7px;font-size:14px}
+.check input{width:17px;height:17px;accent-color:var(--pen)}
+
+/* 表單元件 */
+.in{width:100%;border:1px solid var(--rule);border-radius:8px;padding:9px 12px;background:var(--field);min-width:0}
+textarea.in{resize:vertical;min-height:2.9em}
+.in:focus{border-color:var(--pen);outline:2px solid var(--pen-soft);outline-offset:0}
+.btn{background:var(--pen);color:var(--on-pen);border:1px solid var(--pen);border-radius:8px;padding:8px 18px;font-weight:500}
+.btn:hover{filter:brightness(1.08)}
+.btn.small{padding:5px 13px;font-size:13.5px}
+.btn.ghost{background:transparent;color:var(--pen);border-color:var(--rule)}
+.btn.ghost:hover{border-color:var(--pen);filter:none}
+.btn.danger{background:var(--red);border-color:var(--red);color:var(--on-red)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* 側欄 */
+.mlist{list-style:none;padding:0;display:flex;flex-direction:column;gap:7px}
+.mlist li{display:flex;align-items:flex-start;gap:9px;min-width:0}
+.mlist input{width:17px;height:17px;margin-top:3px;flex:none;accent-color:var(--pen)}
+.mlist .mt{min-width:0;overflow-wrap:anywhere}
+.mlist .by{color:var(--ink-2);font-size:12.5px}
+.mlist li.ready .mt{text-decoration:line-through;color:var(--ink-2)}
+.mlist .dot{width:6px;height:6px;border-radius:50%;background:var(--ink-2);margin:9px 5px 0 6px;flex:none}
+.grp{font-size:12.5px;font-weight:500;color:var(--ink-2);letter-spacing:.05em}
+.old{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.old button{display:block;width:100%;text-align:left;background:none;border:0;padding:0}
+.old .hd{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13.5px}
+.old .tx{color:var(--ink-2);font-size:13.5px;overflow-wrap:anywhere}
+.old button:hover .tx{color:var(--ink)}
+.ai h3{font-size:12.5px;font-weight:500;letter-spacing:.05em;margin-bottom:4px}
+.ai .meet h3{color:var(--red)} .ai .notegrp h3{color:var(--amber)} .ai .fine h3{color:var(--green)}
+.ai ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
+.ai li{font-size:13.5px;overflow-wrap:anywhere}
+.ai .ask{display:block;color:var(--ink-2)}
+
+/* 填寫週報 */
+.form{max-width:720px;display:flex;flex-direction:column;gap:16px;font-size:16px}
+.formhead{color:var(--ink-2)}
+.formhead strong{color:var(--ink)}
+.warnline{color:var(--red)}
+.q{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:16px 18px 18px;display:flex;flex-direction:column;gap:11px}
+.ql{font-family:var(--kai);font-size:20px;font-weight:700;display:flex;align-items:center;gap:10px}
+.qn{flex:none;width:28px;height:28px;border-radius:50%;background:var(--pen);color:var(--on-pen);font-family:var(--sans);font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center}
+.qhelp{font-size:13.5px;color:var(--ink-2)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.remind{background:var(--pen-soft);border-radius:8px;padding:10px 14px}
+.remind h3{font-size:12.5px;font-weight:500;letter-spacing:.05em;color:var(--pen);margin-bottom:2px}
+.goalbox{background:var(--field);border:1px dashed var(--rule);border-radius:8px;padding:10px 14px}
+.goalbox h3{font-size:12.5px;font-weight:500;letter-spacing:.05em;color:var(--ink-2);margin-bottom:2px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.goalbox .out{font-size:13.5px;color:var(--ink-2)}
+.choices{display:flex;flex-wrap:wrap;gap:10px}
+.choice{flex:1 1 160px;text-align:left;padding:11px 14px;border:1.5px solid var(--rule);border-radius:10px;background:var(--surface);display:flex;flex-direction:column;gap:1px}
+.choice strong{font-size:17px}
+.choice span{font-size:13px;color:var(--ink-2)}
+.choice.ok[aria-pressed="true"]{border-color:var(--green);background:var(--green-soft)}
+.choice.stuck[aria-pressed="true"]{border-color:var(--amber);background:var(--amber-soft)}
+.choice.help[aria-pressed="true"]{border-color:var(--red);background:var(--red-soft)}
+.lrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.lrow .grow{flex:1 1 180px}
+.lrow .qty{flex:0 1 96px}
+.lrow .who2{flex:0 1 150px}
+.lrow .x{flex:none;width:36px;height:36px;border-radius:8px;border:1px solid var(--rule);background:var(--surface);font-size:18px;line-height:1;color:var(--ink-2)}
+.lrow .x:hover{border-color:var(--red);color:var(--red)}
+.fl{font-size:13.5px;font-weight:500;color:var(--ink-2)}
+.okbox{background:var(--green-soft);border:1px solid var(--green);border-radius:10px;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.err{color:var(--red);font-weight:500}
+
+/* 個人歷程 */
+.hhead{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.hhead h2{font-family:var(--kai);font-size:22px}
+.strip{display:flex;gap:5px;overflow-x:auto;padding:4px 2px 6px}
+.cell{flex:none;width:34px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.cell i{width:26px;height:26px;border-radius:6px;border:1.5px dashed var(--rule)}
+.cell.ok i{background:var(--green);border:0}
+.cell.stuck i{background:var(--amber);border:0}
+.cell.help i{background:var(--red);border:0}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block;border:1.5px dashed var(--rule)}
+.legend .ok i{background:var(--green);border:0} .legend .stuck i{background:var(--amber);border:0} .legend .help i{background:var(--red);border:0}
+.wk{border-top:1px solid var(--rule);padding:14px 16px 16px;display:flex;flex-direction:column;gap:12px}
+.wkhd{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.wkhd strong{font-family:var(--kai);font-size:18px}
+.wkhd .dt{font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.wk.miss{color:var(--ink-2)}
+
+/* 名單與設定 */
+.rrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid var(--rule)}
+.rrow:first-child{border-top:0}
+.rrow .nm{flex:0 1 150px}
+.rrow .tp{flex:1 1 220px}
+.rrow .ty{flex:0 1 140px}
+.setgrid{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 16px}
+.setgrid label{display:flex;flex-direction:column;gap:4px;flex:1 1 200px;min-width:0}
+
+#toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:9px 18px;border-radius:999px;font-size:14px;max-width:calc(100% - 32px);z-index:10}
+#toast.bad{background:var(--red);color:var(--on-red)}
+
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;line-height:1.5;white-space:pre;overflow-x:auto;background:var(--field);border:1px solid var(--rule);border-radius:8px;padding:10px 12px;margin:8px 0}
+.steps{display:flex;flex-direction:column;gap:8px;padding-left:1.4em}
+.steps a{color:var(--pen)}
+.linkrow{display:flex;flex-direction:column;gap:5px;min-width:0}
+.linkrow .grow{flex:1 1 220px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">畢業專題 · 獨立研究週報</p>
+      <h1 id="className">六年級資優班</h1>
+    </div>
+    <div class="weekbar" id="weekbar" role="group" aria-label="切換週次">
+      <button class="iconbtn" id="prevWeek" type="button" aria-label="上一週">‹</button>
+      <div class="weeklabel"><strong id="weekNo">第 1 週</strong><span id="weekRange"></span><span id="weekTag" class="tag" hidden>檢核週</span></div>
+      <button class="iconbtn" id="nextWeek" type="button" aria-label="下一週">›</button>
+      <button class="linkbtn" id="thisWeek" type="button" hidden>回到本週</button>
+    </div>
+  </header>
+  <div id="banner" class="banner" hidden></div>
+  <nav class="tabs" aria-label="頁面">
+    <button type="button" data-tab="overview">全班總覽</button>
+    <button type="button" data-tab="form">填寫週報</button>
+    <button type="button" data-tab="history">個人歷程</button>
+    <button type="button" data-tab="roster">名單與設定</button>
+  </nav>
+  <main id="view"></main>
+</div>
+<div id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="config.js"></script>
+<script src="lib/firebase-app-compat.js"></script>
+<script src="lib/firebase-firestore-compat.js"></script>
+<script>
+(function(){
+'use strict';
+
+const STAGES=['選題','擬計畫','蒐集資料','動手做','分析解釋','成果展現','評鑑反思'];
+const TYPES=['探究型','發明設計型','創作型','行動型'];
+const STATUS={ok:'順利',stuck:'有點卡',help:'需要老師'};
+const DEFAULTS={className:'六年級資優班',termStart:'2026-08-31'};
+const TABS=['overview','form','history','roster'];
+
+/* ---------- 日期與週次 ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parseISO=s=>{const a=String(s).split('-').map(Number);return new Date(a[0],(a[1]||1)-1,a[2]||1);};
+const mondayOf=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-((x.getDay()+6)%7));return x;};
+const addDays=(s,n)=>{const d=parseISO(s);d.setDate(d.getDate()+n);return iso(d);};
+const md=s=>{const d=parseISO(s);return (d.getMonth()+1)+'/'+d.getDate();};
+const THIS_WEEK=iso(mondayOf(new Date()));
+
+/* ---------- 狀態 ---------- */
+const S={
+  db:null,dbState:'loading',conn:null,isTeacher:false,me:'',
+  setupMsg:'',setupBusy:false,setupDraft:null,importMsg:'',importBad:false,digestFallback:'',linkFallback:'',
+  students:[],reports:[],plans:{},settings:Object.assign({},DEFAULTS),
+  week:THIS_WEEK,tab:'overview',filter:'all',open:new Set(),histSid:null,
+  form:null,formEditing:false,formMsg:'',saved:null,
+  noteDraft:{},rosterDraft:{},newStudent:{name:'',topic:'',type:TYPES[0]},settingsDraft:null,
+  confirm:null,copyFallback:''
+};
+const $=id=>document.getElementById(id);
+const view=$('view');
+
+function weekNo(week){
+  const start=mondayOf(parseISO(S.settings.termStart||DEFAULTS.termStart));
+  return Math.round((parseISO(week)-start)/6048e5)+1;
+}
+function weekTitle(week){const n=weekNo(week);return n>=1?'第 '+n+' 週':'開學前';}
+function weekRange(week){return md(week)+'–'+md(addDays(week,4));}
+
+/* ---------- DOM 小工具 ---------- */
+function h(tag,attrs){
+  const e=document.createElement(tag);
+  if(attrs){
+    for(const k in attrs){
+      const v=attrs[k];
+      if(v==null||v===false) continue;
+      if(k==='class') e.className=v;
+      else if(k==='text') e.textContent=v;
+      else if(k.slice(0,2)==='on') e.addEventListener(k.slice(2),v);
+      else if(k==='value') e.value=v;
+      else if(k==='checked'||k==='disabled'||k==='open') e[k]=!!v;
+      else e.setAttribute(k,v===true?'':v);
+    }
+  }
+  for(let i=2;i<arguments.length;i++) appendKids(e,arguments[i]);
+  return e;
+}
+function appendKids(e,c){
+  if(c==null||c===false) return;
+  if(Array.isArray(c)){c.forEach(x=>appendKids(e,x));return;}
+  e.append(c.nodeType?c:document.createTextNode(String(c)));
+}
+function select(options,value,attrs){
+  const s=h('select',attrs,options.map(o=>h('option',{value:o.value,text:o.label})));
+  s.value=value;
+  return s;
+}
+const ul=items=>h('ul',null,items.map(t=>h('li',{text:t})));
+const blk=(title,body)=>h('div',{class:'blk'},h('h3',{text:title}),body);
+const para=t=>h('p',{text:t});
+
+let toastTimer=0;
+function toast(msg,bad){
+  const t=$('toast');
+  t.textContent=msg;t.className=bad?'bad':'';t.hidden=false;
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>{t.hidden=true;},bad?4200:2400);
+}
+
+/* ---------- 資料讀取 ---------- */
+const studentOf=sid=>S.students.find(s=>s.id===sid);
+const reportOf=(sid,week)=>S.reports.find(r=>r.sid===sid&&r.week===week);
+const sortedStudents=()=>S.students.slice().sort((a,b)=>((a.order||0)-(b.order||0))||String(a.name).localeCompare(String(b.name),'zh-Hant'));
+function latestStage(sid,upTo){
+  let best=null;
+  S.reports.forEach(r=>{if(r.sid===sid&&r.week<=upTo&&(!best||r.week>best.week)) best=r;});
+  return best&&best.stage?best.stage:1;
+}
+function lastReportedWeek(){
+  let w='';
+  S.reports.forEach(r=>{if(r.week>w) w=r.week;});
+  return w;
+}
+function collectMaterials(week){
+  const out=[];
+  S.reports.forEach(r=>{
+    if(r.week!==week||!Array.isArray(r.materials)) return;
+    const s=studentOf(r.sid);if(!s) return;
+    r.materials.forEach((m,i)=>out.push({rid:r.id,i:i,who:s.name,name:m.name,qty:m.qty||'',by:byKey(m.by),ready:!!m.ready}));
+  });
+  return out;
+}
+const matText=m=>m.name+(m.qty?' '+m.qty:'');
+const BY={self:'自己準備',teacher:'跟老師領',school:'跟學校借'};
+const byKey=v=>(v==='teacher'||v==='school')?v:'self';
+function planOf(sid,week){
+  const p=S.plans[sid];if(!p||!p.weeks) return null;
+  const w=p.weeks[String(weekNo(week))];
+  return w&&w.goal?w:null;
+}
+function isCheckWeek(week){
+  const n=String(weekNo(week));
+  return Object.keys(S.plans).some(k=>{const p=S.plans[k];return !!(p&&p.weeks&&p.weeks[n]&&p.weeks[n].check);});
+}
+function planBlock(plan,title){
+  return blk(title,[para(plan.goal),plan.out?h('p',{class:'out',text:'拿得出來的東西：'+plan.out}):null]);
+}
+
+/* ---------- 寫入 ---------- */
+const chains={};
+function attempt(fn){
+  return fn().catch(e=>{
+    if(e&&e.code==='unavailable') return new Promise(r=>setTimeout(r,400+Math.random()*600)).then(fn);
+    throw e;
+  });
+}
+function write(path,fn){
+  const run=()=>withTimeout(attempt(fn),15000);
+  const p=(chains[path]||Promise.resolve()).then(run,run);
+  chains[path]=p.catch(()=>{});
+  return p;
+}
+function errCopy(e){
+  const c=e&&e.code;
+  if(c==='permission-denied') return '沒有儲存：資料庫不允許寫入，請老師檢查 Firebase 的規則。';
+  if(c==='not-found') return '沒有儲存：這筆資料已經不在了，請重新整理頁面。';
+  if(c==='resource-exhausted') return '沒有儲存：今天的免費用量用完了，明天會恢復。';
+  if(c==='timeout') return '網路不穩，這筆資料還沒送出去。讓頁面開著，連上網路後會自動送出。';
+  return '沒有儲存：連線不穩，請再試一次。';
+}
+async function save(path,fn,okMsg){
+  if(!S.db){toast('現在讀不到資料，沒有儲存。',true);return false;}
+  try{await write(path,fn);if(okMsg) toast(okMsg);return true;}
+  catch(e){toast(errCopy(e),true);return false;}
+}
+const clone=x=>JSON.parse(JSON.stringify(x));
+
+/* ---------- 繪製排程：輸入中或按鍵按下時不重畫 ---------- */
+let pending=false,raf=0,pointerDown=false;
+function inputFocused(){
+  const a=document.activeElement;
+  if(!a||!view.contains(a)) return false;
+  if(a.tagName==='TEXTAREA'||a.tagName==='SELECT') return true;
+  return a.tagName==='INPUT'&&!/^(checkbox|radio|button|file)$/.test(a.type);
+}
+function scheduleRender(){
+  if(inputFocused()||pointerDown){pending=true;renderChrome();return;}
+  cancelAnimationFrame(raf);
+  raf=requestAnimationFrame(()=>{
+    if(inputFocused()||pointerDown){pending=true;renderChrome();return;}
+    pending=false;render();
+  });
+}
+function flush(){if(pending&&!inputFocused()&&!pointerDown){pending=false;render();}}
+addEventListener('pointerdown',()=>{pointerDown=true;},true);
+addEventListener('pointerup',()=>{pointerDown=false;setTimeout(flush,60);},true);
+addEventListener('pointercancel',()=>{pointerDown=false;setTimeout(flush,60);},true);
+view.addEventListener('focusout',()=>{setTimeout(flush,300);});
+
+/* ---------- 共用元件 ---------- */
+function stageTrack(stage){
+  const st=Math.min(7,Math.max(1,Number(stage)||1));
+  return h('span',{class:'track',role:'img','aria-label':'第 '+st+' 階段：'+STAGES[st-1]},
+    h('span',{class:'bars'},STAGES.map((_,i)=>h('i',{class:i+1<st?'on':(i+1===st?'now':'')}))),
+    h('span',{class:'lbl',text:st+' '+STAGES[st-1]}));
+}
+function statusPill(r){
+  if(!r) return h('span',{class:'pill none',text:'未回報'});
+  const handled=r.resolved&&r.status!=='ok';
+  return h('span',{class:'pill '+(handled?'handled':(STATUS[r.status]?r.status:'ok')),text:(STATUS[r.status]||'順利')+(handled?'・已處理':'')});
+}
+function reportBlocks(r,prev,plan){
+  const b=[];
+  if(plan) b.push(planBlock(plan,'企畫書這週目標'));
+  if(prev&&Array.isArray(prev.next)&&prev.next.length) b.push(blk('上週說要做',ul(prev.next)));
+  b.push(blk('這週完成',para(r.done||'（沒有填寫）')));
+  if(r.status!=='ok'||r.problem){
+    b.push(blk('遇到的問題',para(r.problem||'（沒有填寫）')));
+    if(r.tried) b.push(blk('自己試過的方法',para(r.tried)));
+  }
+  b.push(blk('下週要做',r.next&&r.next.length?ul(r.next):para('（沒有填寫）')));
+  b.push(blk('需要準備的材料',r.materials&&r.materials.length
+    ?ul(r.materials.map(m=>matText(m)+'（'+BY[byKey(m.by)]+(byKey(m.by)!=='self'&&m.ready?'，已備妥':'')+'）'))
+    :para('不需要')));
+  if(r.ai) b.push(blk('這週用 AI 做了什麼',para(r.ai)));
+  return h('div',{class:'two'},b);
+}
+function emptyRoster(){
+  if(!S.isTeacher) return h('div',{class:'panel empty'},
+    h('h2',{text:'老師還沒有放入名單'}),
+    h('p',{text:'等老師把班級名單放進來，這裡就會出現你的名字。如果等很久都沒有，請檢查網路或告訴老師。'}));
+  return h('div',{class:'panel empty'},
+    h('h2',{text:'還沒有學生名單'}),
+    h('p',{text:'到「名單與設定」匯入班級資料，或一位一位新增學生和題目。'}),
+    h('button',{class:'btn',type:'button',onclick:()=>go('roster')},'去名單與設定'));
+}
+
+/* ---------- 全班總覽 ---------- */
+function viewOverview(){
+  const studs=sortedStudents();
+  if(!studs.length) return emptyRoster();
+  const wk=S.week;
+  const rows=studs.map(s=>({s:s,r:reportOf(s.id,wk)}));
+  const cnt={all:rows.length,help:0,stuck:0,ok:0,none:0};
+  rows.forEach(x=>{if(!x.r) cnt.none++;else if(x.r.status==='help') cnt.help++;else if(x.r.status==='stuck') cnt.stuck++;else cnt.ok++;});
+  const openHelp=rows.filter(x=>x.r&&x.r.status==='help'&&!x.r.resolved).length;
+  const openStuck=rows.filter(x=>x.r&&x.r.status==='stuck'&&!x.r.resolved).length;
+  const mats=collectMaterials(wk);
+  const tMats=mats.filter(m=>m.by==='teacher'),cMats=mats.filter(m=>m.by==='school'),sMats=mats.filter(m=>m.by==='self');
+  const aMats=tMats.concat(cMats);
+  const tPend=aMats.filter(m=>!m.ready).length;
+  const root=h('div',{class:'stack'});
+
+  if(cnt.none===cnt.all){
+    const last=lastReportedWeek();
+    if(last&&last!==wk){
+      root.append(h('p',{class:'hint'},weekTitle(wk)+'還沒有人回報。',
+        h('button',{class:'linkbtn',type:'button',onclick:()=>{S.week=last;render();}},'看最近有回報的'+weekTitle(last))));
+    }
+  }
+
+  root.append(h('section',{class:'summary','aria-label':'本週摘要'},
+    h('div',{class:'fig'},h('div',{class:'k',text:'已回報'}),
+      h('div',{class:'v'},String(cnt.all-cnt.none),h('small',{text:' / '+cnt.all})),
+      h('div',{class:'s',text:cnt.none?cnt.none+' 位還沒回報':'全班都回報了'})),
+    h('div',{class:'fig'+(openHelp?' alert':'')},h('div',{class:'k',text:'需要老師'}),
+      h('div',{class:'v',text:String(openHelp)}),
+      h('div',{class:'s',text:openHelp?'位還沒處理':(cnt.help?'都處理了':'本週沒有')})),
+    h('div',{class:'fig'+(openStuck?' warn':'')},h('div',{class:'k',text:'有點卡'}),
+      h('div',{class:'v',text:String(openStuck)}),
+      h('div',{class:'s',text:openStuck?'位還沒處理':(cnt.stuck?'都處理了':'本週沒有')})),
+    h('div',{class:'fig'},h('div',{class:'k',text:'老師要備的材料'}),
+      h('div',{class:'v'},String(tPend),h('small',{text:' 項'})),
+      h('div',{class:'s',text:aMats.length?'未備妥，共 '+aMats.length+' 項':'本週沒有人提出'}))
+  ));
+
+  /* 學生列表 */
+  const rank=x=>!x.r?2:(x.r.status==='help'&&!x.r.resolved?0:(x.r.status==='stuck'&&!x.r.resolved?1:3));
+  const match=x=>S.filter==='all'||(S.filter==='none'?!x.r:(x.r&&(S.filter==='ok'?(x.r.status!=='help'&&x.r.status!=='stuck'):x.r.status===S.filter)));
+  const shown=rows.filter(match).sort((a,b)=>rank(a)-rank(b));
+  const fchip=(key,label)=>h('button',{class:'chip',type:'button','aria-pressed':S.filter===key?'true':'false',onclick:()=>{S.filter=key;render();}},label,h('span',{class:'n',text:String(cnt[key])}));
+  const list=h('section',{class:'panel'},
+    h('div',{class:'ph'},h('h2',{text:weekTitle(wk)+'週報'}),h('span',{class:'sub',text:'點一列看完整內容與回覆'})),
+    h('div',{class:'filters'},fchip('all','全部'),fchip('help','需要老師'),fchip('stuck','有點卡'),fchip('ok','順利'),fchip('none','未回報')),
+    shown.length?shown.map(x=>studentRow(x.s,x.r,wk)):h('p',{class:'hint',style:'padding:18px 16px',text:'這個分類目前沒有學生。'}));
+
+  /* 側欄 */
+  const aside=h('div',{class:'stack'});
+  const nextTitle=weekTitle(addDays(wk,7));
+  const matPanel=h('section',{class:'panel'},
+    h('div',{class:'ph'},h('h2',{text:'下週備料清單'}),h('span',{class:'sub',text:nextTitle+'上課前備妥'})),
+    h('div',{class:'pb'},
+      mats.length?[
+        [['跟老師領',tMats],['跟學校借',cMats]].map(g=>g[1].length?[h('div',{class:'grp',text:g[0]}),
+          h('ul',{class:'mlist'},g[1].map(m=>h('li',{class:m.ready?'ready':''},
+            h('input',{type:'checkbox',id:'mat-'+m.rid+'-'+m.i,checked:m.ready,'aria-label':matText(m)+' 已備妥',onchange:e=>setReady(m,e.target.checked)}),
+            h('label',{class:'mt',for:'mat-'+m.rid+'-'+m.i},matText(m),' ',h('span',{class:'by',text:m.who}))
+          )))]:null),
+        sMats.length?[h('div',{class:'grp',text:'學生自己準備'}),
+          h('ul',{class:'mlist'},sMats.map(m=>h('li',null,h('span',{class:'dot'}),h('span',{class:'mt'},matText(m),' ',h('span',{class:'by',text:m.who})))))]:null,
+        h('div',{class:'row'},h('button',{class:'btn small ghost',type:'button',onclick:()=>copyMaterials(wk,tMats,cMats,sMats)},'複製清單')),
+        S.copyFallback?h('textarea',{class:'in',id:'copyFallback',rows:6,readonly:true,'aria-label':'備料清單文字，請手動複製',value:S.copyFallback}):null
+      ]:h('p',{class:'hint',text:'學生在週報填的材料會彙整在這裡。'})
+    ));
+  aside.append(matPanel);
+
+  const olds=S.reports.filter(r=>r.week<wk&&(r.status==='help'||r.status==='stuck')&&!r.resolved&&studentOf(r.sid))
+    .sort((a,b)=>(a.status===b.status?0:(a.status==='help'?-1:1))||(a.week<b.week?1:-1));
+  aside.append(h('section',{class:'panel'},
+    h('div',{class:'ph'},h('h2',{text:'前幾週還沒處理的問題'}),olds.length?h('span',{class:'sub',text:olds.length+' 則'}):null),
+    h('div',{class:'pb'},olds.length
+      ?h('ul',{class:'old'},olds.slice(0,8).map(r=>h('li',null,h('button',{type:'button',onclick:()=>{S.histSid=r.sid;go('history');}},
+          h('div',{class:'hd'},h('strong',{text:studentOf(r.sid).name}),h('span',{class:'hint',text:weekTitle(r.week)}),statusPill(r)),
+          h('div',{class:'tx',text:r.problem||'（沒有寫問題內容）'})))))
+      :h('p',{class:'hint',text:'前幾週的問題都處理完了。'}))));
+
+  aside.append(handoffPanel(wk,rows));
+
+  root.append(h('div',{class:'cols'},list,aside));
+  return root;
+}
+
+function studentRow(s,r,wk){
+  const prev=reportOf(s.id,addDays(wk,-7)),plan=planOf(s.id,wk);
+  const stage=r?r.stage:latestStage(s.id,wk);
+  let peek;
+  if(r){
+    const first=(r.status==='help'||r.status==='stuck')&&r.problem
+      ?h('span',null,h('b',{text:'卡在：'}),oneLine(r.problem))
+      :h('span',null,h('b',{text:'完成：'}),oneLine(r.done||'（沒有填寫）'));
+    const nx=r.next&&r.next.length?h('span',null,h('b',{text:'下週：'}),oneLine(r.next[0])+(r.next.length>1?' 等 '+r.next.length+' 項':'')):null;
+    peek=h('span',{class:'peek'},first,nx);
+  }else{
+    peek=h('span',{class:'peek'},h('span',{text:'本週還沒有回報。'}),plan?h('span',null,h('b',{text:'目標：'}),oneLine(plan.goal)):null,
+      h('button',{class:'linkbtn',type:'button',onclick:e=>{e.preventDefault();e.stopPropagation();loadForm(s.id);S.saved=null;go('form');}},'幫他填週報'));
+  }
+  const body=h('div',{class:'sbody'});
+  if(r){
+    body.append(reportBlocks(r,prev,plan));
+    const draft=Object.prototype.hasOwnProperty.call(S.noteDraft,r.id)?S.noteDraft[r.id]:(r.note||'');
+    body.append(h('div',{class:'note'},
+      h('label',{class:'lbl',for:'note-'+r.id,text:'老師回覆'}),
+      h('textarea',{class:'in redpen',id:'note-'+r.id,rows:2,placeholder:'寫給學生的一句話，或下次面談要問的問題',value:draft,oninput:e=>{S.noteDraft[r.id]=e.target.value;}}),
+      h('div',{class:'row'},
+        h('button',{class:'btn small',type:'button',onclick:()=>saveNote(r)},'儲存回覆'),
+        r.status!=='ok'?h('label',{class:'check'},h('input',{type:'checkbox',id:'res-'+r.id,checked:!!r.resolved,onchange:e=>setResolved(r,e.target.checked)}),'這個問題已處理'):null,
+        h('button',{class:'linkbtn',type:'button',onclick:()=>{S.histSid=s.id;go('history');}},'看歷程'))));
+  }else{
+    const pre=[plan?planBlock(plan,'企畫書這週目標'):null,prev&&prev.next&&prev.next.length?blk('上週說要做',ul(prev.next)):null].filter(Boolean);
+    if(pre.length) body.append(h('div',{class:'two'},pre));
+    else body.append(h('p',{class:'hint',text:'上週也沒有留下計畫。'}));
+  }
+  const d=h('details',{class:'srow',open:S.open.has(s.id)},
+    h('summary',null,
+      h('span',{class:'who'},h('strong',{text:s.name}),s.demo?h('span',{class:'tag',text:'示範'}):(r&&r.demo?h('span',{class:'tag',text:'示範週報'}):null)),
+      h('span',{class:'topic',text:s.topic||'（還沒訂題目）'}),
+      stageTrack(stage),
+      h('span',{class:'pillcell'},statusPill(r)),
+      h('span',{class:'chev','aria-hidden':'true'}),
+      peek),
+    body);
+  d.addEventListener('toggle',()=>{if(d.open) S.open.add(s.id);else S.open.delete(s.id);});
+  return d;
+}
+function oneLine(t){t=String(t||'').replace(/\s+/g,' ').trim();return t.length>46?t.slice(0,45)+'…':t;}
+
+async function saveNote(r){
+  const el=$('note-'+r.id);
+  const text=(el?el.value:(S.noteDraft[r.id]||'')).trim();
+  const ok=await save('reports/'+r.id,()=>S.db.doc('reports/'+r.id).update({note:text}),'已儲存回覆');
+  if(ok){delete S.noteDraft[r.id];scheduleRender();}
+}
+function setResolved(r,val){
+  save('reports/'+r.id,()=>S.db.doc('reports/'+r.id).update({resolved:!!val}),val?'已標記為處理完成':'已改回未處理');
+}
+function setReady(m,val){
+  const r=S.reports.find(x=>x.id===m.rid);
+  if(!r||!Array.isArray(r.materials)||!r.materials[m.i]) return;
+  const list=clone(r.materials);
+  list[m.i].ready=!!val;
+  save('reports/'+r.id,()=>S.db.doc('reports/'+r.id).update({materials:list}));
+}
+function copyMaterials(wk,tMats,cMats,sMats){
+  const lines=[weekTitle(addDays(wk,7))+'備料清單（'+weekTitle(wk)+'週報彙整）'];
+  if(tMats.length){lines.push('','【跟老師領】');tMats.forEach(m=>lines.push((m.ready?'☑ ':'☐ ')+matText(m)+'（'+m.who+'）'));}
+  if(cMats.length){lines.push('','【跟學校借】');cMats.forEach(m=>lines.push((m.ready?'☑ ':'☐ ')+matText(m)+'（'+m.who+'）'));}
+  if(sMats.length){lines.push('','【學生自己準備】');sMats.forEach(m=>lines.push('・'+m.who+'：'+matText(m)));}
+  const text=lines.join('\n');
+  const fallback=()=>{S.copyFallback=text;render();const t=$('copyFallback');if(t){t.focus();t.select();}toast('無法自動複製，請手動複製下方文字。',true);};
+  try{
+    navigator.clipboard.writeText(text).then(()=>{S.copyFallback='';toast('已複製備料清單');},fallback);
+  }catch(e){fallback();}
+}
+
+/* ---------- 交給 AI 整理（複製本週週報） ---------- */
+function copyText(text,okMsg,key){
+  const fallback=()=>{S[key]=text;render();const t=$(key);if(t){t.focus();t.select();}toast('無法自動複製，請手動複製下方文字。',true);};
+  try{
+    navigator.clipboard.writeText(text).then(()=>{S[key]='';toast(okMsg);},fallback);
+  }catch(e){fallback();}
+}
+function weekDigest(wk,rows){
+  const L=['請把下面這一週的專題週報分成三組：本週面談、書面回饋、進度正常。',
+    '每位學生給一句理由，和一個我可以問他的問題。只根據內容判斷，不要推測沒寫的事。','',
+    weekTitle(wk)+'（'+weekRange(wk)+'）'];
+  rows.forEach(x=>{
+    const s=x.s,r=x.r,pl=planOf(s.id,wk);
+    L.push('');
+    if(!r){L.push('【'+s.name+'｜'+(s.topic||'')+'】本週未回報'+(pl?'（企畫書目標：'+pl.goal+'）':''));return;}
+    L.push('【'+s.name+'｜'+(s.topic||'')+'】狀態：'+(STATUS[r.status]||'順利')+(r.resolved&&r.status!=='ok'?'（已處理）':''));
+    if(pl) L.push('企畫書目標：'+pl.goal);
+    L.push('完成：'+(r.done||'（未填）'));
+    if(r.problem) L.push('問題：'+r.problem);
+    if(r.tried) L.push('試過：'+r.tried);
+    if(r.next&&r.next.length) L.push('下週：'+r.next.join('；'));
+    if(r.materials&&r.materials.length) L.push('材料：'+r.materials.map(m=>matText(m)+'（'+BY[byKey(m.by)]+'）').join('；'));
+  });
+  return L.join('\n');
+}
+function handoffPanel(wk,rows){
+  return h('section',{class:'panel'},
+    h('div',{class:'ph'},h('h2',{text:'交給 AI 整理'}),h('span',{class:'sub',text:weekTitle(wk)})),
+    h('div',{class:'pb'},
+      h('p',{class:'hint',text:'複製本週週報，貼給 Claude，請它分成面談、書面回饋、進度正常三組。內容只有代稱，沒有姓名。'}),
+      h('div',{class:'row'},h('button',{class:'btn small',type:'button',onclick:()=>copyText(weekDigest(wk,rows),'已複製本週週報','digestFallback')},'複製本週週報')),
+      S.digestFallback?h('textarea',{class:'in',id:'digestFallback',rows:8,readonly:true,'aria-label':'本週週報文字，請手動複製',value:S.digestFallback}):null));
+}
+
+/* ---------- 填寫週報 ---------- */
+function blankForm(){return {sid:'',stage:0,status:'',done:'',problem:'',tried:'',next:['',''],materials:[{name:'',qty:'',by:'self'}],ai:'no',aiNote:''};}
+function loadForm(sid){
+  const r=reportOf(sid,S.week);
+  S.formMsg='';
+  if(r){
+    S.form={sid:sid,stage:r.stage||1,status:STATUS[r.status]?r.status:'ok',done:r.done||'',problem:r.problem||'',tried:r.tried||'',
+      next:r.next&&r.next.length?r.next.slice():[''],
+      materials:r.materials&&r.materials.length?r.materials.map(m=>({name:m.name||'',qty:m.qty||'',by:byKey(m.by)})):[{name:'',qty:'',by:'self'}],
+      ai:r.ai?'yes':'no',aiNote:r.ai||''};
+    S.formEditing=true;
+  }else{
+    S.form=blankForm();S.form.sid=sid;
+    S.form.stage=S.reports.some(x=>x.sid===sid&&x.week<=S.week)?latestStage(sid,S.week):0;S.formEditing=false;
+  }
+}
+function q(n,label){
+  const e=h('section',{class:'q'},h('h2',{class:'ql'},h('span',{class:'qn',text:String(n)}),label));
+  for(let i=2;i<arguments.length;i++) appendKids(e,arguments[i]);
+  return e;
+}
+function viewForm(){
+  const studs=sortedStudents();
+  if(!studs.length) return emptyRoster();
+  if(!S.form) S.form=blankForm();
+  if(S.form.sid&&!studentOf(S.form.sid)) S.form=blankForm();
+  if(!S.isTeacher&&!S.form.sid&&!S.saved&&S.me&&studentOf(S.me)) loadForm(S.me);
+  const f=S.form,wk=S.week,root=h('div',{class:'form'});
+
+  if(S.saved){
+    root.append(h('div',{class:'okbox'},
+      h('p',null,h('strong',{text:'已儲存。'}),S.saved.name+' 的'+weekTitle(S.saved.week)+'週報寫好了。'),
+      h('div',{class:'row'},
+        h('button',{class:'btn small',type:'button',onclick:()=>{S.saved=null;render();}},S.isTeacher?'換下一位填寫':'再改一下'),
+        S.isTeacher?h('button',{class:'btn small ghost',type:'button',onclick:()=>{S.saved=null;go('overview');}},'看全班總覽')
+                   :h('button',{class:'btn small ghost',type:'button',onclick:()=>{S.saved=null;go('history');}},'看我的歷程'))));
+  }
+  root.append(h('p',{class:'formhead'},'現在填的是 ',h('strong',{text:weekTitle(wk)}),'（'+weekRange(wk)+'）的週報。',
+    wk!==THIS_WEEK?h('span',{class:'warnline',text:'這不是本週，請確認右上角的週次。'}):null),
+    h('p',{class:'hint',text:'只寫專題的事。不要寫全名、電話或住址。'}));
+
+  root.append(q(1,'我是誰？',
+    h('div',{class:'chips'},studs.map(s=>h('button',{class:'chip big',type:'button','aria-pressed':f.sid===s.id?'true':'false',onclick:()=>{loadForm(s.id);S.saved=null;if(!S.isTeacher) rememberMe(s.id);render();}},
+      s.name,reportOf(s.id,wk)?h('span',{class:'done',text:'已填'}):null)))));
+  if(!f.sid){
+    root.append(h('p',{class:'hint',text:'先點自己的名字，下面的題目就會出現。'}));
+    return root;
+  }
+  const s=studentOf(f.sid),prev=reportOf(f.sid,addDays(wk,-7)),plan=planOf(f.sid,wk),nextPlan=planOf(f.sid,addDays(wk,7));
+  appendKids(root.lastChild,[
+    h('p',null,'我的題目：',h('strong',{text:s.topic||'（還沒訂題目）'})),
+    S.formEditing?h('p',{class:'hint',text:'這一週已經填過，現在是修改。'}):null,
+    plan?h('div',{class:'goalbox'},h('h3',null,'企畫書：這週要完成到',plan.check?h('span',{class:'tag',text:'檢核週'}):null),h('p',{text:plan.goal}),plan.out?h('p',{class:'out',text:'拿得出來的東西：'+plan.out}):null):null,
+    prev&&prev.next&&prev.next.length?h('div',{class:'remind'},h('h3',{text:'上週我說要做'}),ul(prev.next)):null]);
+
+  root.append(q(2,'我現在做到哪個階段？',
+    h('div',{class:'chips'},STAGES.map((n,i)=>h('button',{class:'chip',type:'button','aria-pressed':f.stage===i+1?'true':'false',onclick:()=>{f.stage=i+1;render();}},(i+1)+' '+n)))));
+
+  root.append(q(3,'這週我完成了什麼？',
+    h('textarea',{class:'in',id:'f-done',rows:3,placeholder:'例：做完第二次實驗，量了三天的溫度',value:f.done,oninput:e=>{f.done=e.target.value;}})));
+
+  const choice=(key,title,desc)=>h('button',{class:'choice '+key,type:'button','aria-pressed':f.status===key?'true':'false',onclick:()=>{f.status=key;render();}},h('strong',{text:title}),h('span',{text:desc}));
+  root.append(q(4,'這週順利嗎？',
+    h('div',{class:'choices'},choice('ok','順利','照計畫進行'),choice('stuck','有點卡','有問題，我想先自己試試'),choice('help','需要老師','我需要老師幫忙')),
+    f.status==='stuck'||f.status==='help'?[
+      h('label',{class:'fl',for:'f-problem',text:'我遇到的問題'}),
+      h('textarea',{class:'in',id:'f-problem',rows:2,placeholder:'發生了什麼事？寫得越具體越好',value:f.problem,oninput:e=>{f.problem=e.target.value;}}),
+      h('label',{class:'fl',for:'f-tried',text:'我已經試過的方法'}),
+      h('textarea',{class:'in',id:'f-tried',rows:2,placeholder:'先寫你試過什麼，老師才知道從哪裡幫你',value:f.tried,oninput:e=>{f.tried=e.target.value;}})
+    ]:null));
+
+  root.append(q(5,'下週我要做的事',
+    nextPlan?h('p',{class:'qhelp',text:'企畫書下週的目標：'+nextPlan.goal}):null,
+    f.next.map((t,i)=>h('div',{class:'lrow'},
+      h('input',{class:'in grow',id:'f-next-'+i,type:'text','aria-label':'下週要做的第 '+(i+1)+' 件事',placeholder:i===0?'例：訪問早餐店老闆':'再一件事（可以不填）',value:t,oninput:e=>{f.next[i]=e.target.value;}}),
+      f.next.length>1?h('button',{class:'x',type:'button','aria-label':'刪除這一項',onclick:()=>{f.next.splice(i,1);render();}},'×'):null)),
+    f.next.length<5?h('div',null,h('button',{class:'btn small ghost',type:'button',onclick:()=>{f.next.push('');render();}},'＋ 再加一件事')):null));
+
+  root.append(q(6,'下週需要準備的材料',
+    h('p',{class:'qhelp',text:'不需要材料就留白。零件和感測器跟老師領，筆電、烤箱這類選跟學校借。'}),
+    f.materials.map((m,i)=>h('div',{class:'lrow'},
+      h('input',{class:'in grow',id:'f-mat-'+i,type:'text','aria-label':'材料名稱',placeholder:'材料，例：厚紙板',value:m.name,oninput:e=>{m.name=e.target.value;}}),
+      h('input',{class:'in qty',id:'f-qty-'+i,type:'text','aria-label':'數量',placeholder:'數量',value:m.qty,oninput:e=>{m.qty=e.target.value;}}),
+      select([{value:'self',label:'我自己準備'},{value:'teacher',label:'跟老師領'},{value:'school',label:'跟學校借'}],m.by,{class:'in who2',id:'f-by-'+i,'aria-label':'誰準備',onchange:e=>{m.by=e.target.value;}}),
+      f.materials.length>1?h('button',{class:'x',type:'button','aria-label':'刪除這項材料',onclick:()=>{f.materials.splice(i,1);render();}},'×'):null)),
+    f.materials.length<8?h('div',null,h('button',{class:'btn small ghost',type:'button',onclick:()=>{f.materials.push({name:'',qty:'',by:'self'});render();}},'＋ 再加一項材料')):null));
+
+  root.append(q(7,'這週有沒有用 AI？',
+    h('div',{class:'chips'},
+      h('button',{class:'chip',type:'button','aria-pressed':f.ai==='no'?'true':'false',onclick:()=>{f.ai='no';render();}},'沒有'),
+      h('button',{class:'chip',type:'button','aria-pressed':f.ai==='yes'?'true':'false',onclick:()=>{f.ai='yes';render();}},'有')),
+    f.ai==='yes'?h('input',{class:'in',id:'f-ai',type:'text','aria-label':'用 AI 做了什麼',placeholder:'用哪個工具、做了什麼？例：請 e度問我問題，把題目變小',value:f.aiNote,oninput:e=>{f.aiNote=e.target.value;}}):null));
+
+  root.append(h('div',{class:'row'},
+    h('button',{class:'btn',type:'button',id:'f-save',onclick:saveForm},S.formEditing?'儲存修改':'儲存週報'),
+    S.formMsg?h('span',{class:'err',role:'alert',text:S.formMsg}):null));
+  return root;
+}
+async function saveForm(){
+  const f=S.form,s=studentOf(f.sid);
+  if(!s){S.formMsg='請先點自己的名字。';render();return;}
+  if(!f.stage){S.formMsg='第 2 題還沒選：現在做到哪個階段？';render();return;}
+  if(!f.done.trim()){S.formMsg='第 3 題還沒寫：這週完成了什麼？';render();return;}
+  if(!f.status){S.formMsg='第 4 題還沒選：這週順利嗎？';render();return;}
+  if(f.status!=='ok'&&!f.problem.trim()){S.formMsg='請寫下你遇到的問題，老師才幫得上忙。';render();return;}
+  S.formMsg='';
+  const wk=S.week,id=f.sid+'_'+wk,old=reportOf(f.sid,wk);
+  const mats=f.materials.filter(m=>m.name.trim()).map(m=>{
+    const name=m.name.trim();
+    const was=old&&Array.isArray(old.materials)?old.materials.find(x=>x.name===name):null;
+    return {name:name,qty:m.qty.trim(),by:byKey(m.by),ready:!!(was&&was.ready)};
+  });
+  const doc={sid:f.sid,week:wk,stage:f.stage,status:f.status,done:f.done.trim(),
+    problem:f.status==='ok'?'':f.problem.trim(),tried:f.status==='ok'?'':f.tried.trim(),
+    next:f.next.map(x=>x.trim()).filter(Boolean),materials:mats,
+    ai:f.ai==='yes'?(f.aiNote.trim()||'有使用'):'',
+    note:old?(old.note||''):'',resolved:old?!!old.resolved:false,updatedAt:new Date().toISOString()};
+  if(s.demo) doc.demo=true;
+  const btn=$('f-save');if(btn) btn.disabled=true;
+  const ok=await save('reports/'+id,()=>S.db.doc('reports/'+id).set(doc));
+  if(ok){S.saved={name:s.name,week:wk};S.form=blankForm();S.formEditing=false;render();try{scrollTo(0,0);}catch(e){}}
+  else if(btn) btn.disabled=false;
+}
+
+/* ---------- 個人歷程 ---------- */
+function viewHistory(){
+  const studs=sortedStudents();
+  if(!studs.length) return emptyRoster();
+  if(!S.isTeacher){
+    if(!S.me||!studentOf(S.me)) return h('div',{class:'panel empty'},h('h2',{text:'先告訴我你是誰'}),
+      h('p',{text:'到「填寫週報」點自己的名字，這裡就會出現你每一週的紀錄和老師的回覆。'}),
+      h('button',{class:'btn',type:'button',onclick:()=>go('form')},'去填寫週報'));
+    S.histSid=S.me;
+  }
+  if(!S.histSid||!studentOf(S.histSid)) S.histSid=studs[0].id;
+  const s=studentOf(S.histSid);
+  const reps=S.reports.filter(r=>r.sid===s.id).sort((a,b)=>a.week<b.week?1:-1);
+  const root=h('div',{class:'stack'});
+  if(S.isTeacher) root.append(h('div',{class:'chips'},studs.map(x=>h('button',{class:'chip',type:'button','aria-pressed':x.id===s.id?'true':'false',onclick:()=>{S.histSid=x.id;render();}},x.name))));
+
+  const panel=h('section',{class:'panel'});
+  const head=h('div',{class:'hhead'},
+    h('div',{class:'row'},h('h2',{text:s.name}),s.demo?h('span',{class:'tag',text:'示範'}):null,s.type?h('span',{class:'hint',text:s.type}):null),
+    h('p',{text:s.topic||'（還沒訂題目）'}),
+    stageTrack(reps.length?reps[0].stage:1));
+  panel.append(head);
+  if(!reps.length){
+    panel.append(h('div',{class:'wk miss'},h('p',{text:'還沒有任何週報。'}),
+      h('div',null,h('button',{class:'btn small',type:'button',onclick:()=>{loadForm(s.id);S.saved=null;go('form');}},'填第一份週報'))));
+    root.append(panel);return root;
+  }
+  const first=reps[reps.length-1].week;
+  let last=reps[0].week>THIS_WEEK?reps[0].week:THIS_WEEK;
+  const weeks=[];
+  for(let w=last,n=0;w>=first&&n<60;w=addDays(w,-7),n++) weeks.push(w);
+  const byWeek={};reps.forEach(r=>{byWeek[r.week]=r;});
+
+  head.append(
+    h('div',{class:'strip',role:'img','aria-label':'每週狀態'},weeks.slice().reverse().map(w=>{
+      const r=byWeek[w];
+      return h('span',{class:'cell '+(r?(STATUS[r.status]?r.status:'ok'):''),title:weekTitle(w)+'：'+(r?(STATUS[r.status]||'順利'):'未回報')},h('i'),String(Math.max(weekNo(w),0)));
+    })),
+    h('div',{class:'legend'},h('span',{class:'ok'},h('i'),'順利'),h('span',{class:'stuck'},h('i'),'有點卡'),h('span',{class:'help'},h('i'),'需要老師'),h('span',null,h('i'),'未回報'),h('span',{text:'數字是週次'})));
+
+  weeks.forEach(w=>{
+    const r=byWeek[w];
+    const plan=planOf(s.id,w);
+    if(!r){panel.append(h('div',{class:'wk miss'},h('div',{class:'wkhd'},h('strong',{text:weekTitle(w)}),h('span',{class:'dt',text:weekRange(w)}),statusPill(null)),plan?h('p',{class:'hint',text:'企畫書目標：'+plan.goal}):null));return;}
+    panel.append(h('div',{class:'wk'},
+      h('div',{class:'wkhd'},h('strong',{text:weekTitle(w)}),h('span',{class:'dt',text:weekRange(w)}),statusPill(r),stageTrack(r.stage),r.demo&&!s.demo?h('span',{class:'tag',text:'示範週報'}):null),
+      reportBlocks(r,byWeek[addDays(w,-7)],plan),
+      r.note?h('div',{class:'note'},h('span',{class:'lbl',text:'老師回覆'}),h('p',{class:'redpen',text:r.note})):null));
+  });
+  root.append(panel);
+  return root;
+}
+
+/* ---------- 名單與設定 ---------- */
+function viewRoster(){
+  const studs=sortedStudents();
+  const sd=S.settingsDraft||(S.settingsDraft={className:S.settings.className||'',termStart:S.settings.termStart||DEFAULTS.termStart});
+  const root=h('div',{class:'stack'});
+  root.append(linksPanel());
+
+  root.append(h('section',{class:'panel'},
+    h('div',{class:'ph'},h('h2',{text:'班級設定'}),h('span',{class:'sub',text:'週次從這一天所在的那一週算第 1 週'})),
+    h('div',{class:'pb'},h('div',{class:'setgrid'},
+      h('label',null,h('span',{class:'fl',text:'班級名稱'}),h('input',{class:'in',id:'set-name',type:'text',value:sd.className,oninput:e=>{sd.className=e.target.value;}})),
+      h('label',null,h('span',{class:'fl',text:'第 1 週開始日'}),h('input',{class:'in',id:'set-start',type:'date',value:sd.termStart,oninput:e=>{sd.termStart=e.target.value;}})),
+      h('button',{class:'btn',type:'button',onclick:saveSettings},'儲存設定')))));
+
+  const nd=S.newStudent;
+  const typeOpts=TYPES.map(t=>({value:t,label:t}));
+  root.append(h('section',{class:'panel'},
+    h('div',{class:'ph'},h('h2',{text:'學生與題目'}),h('span',{class:'sub',text:'共 '+studs.length+' 位。建議用座號或暱稱，不要輸入全名。'})),
+    h('div',null,
+      studs.map(s=>rosterRow(s,typeOpts)),
+      h('div',{class:'rrow'},
+        h('input',{class:'in nm',id:'new-name',type:'text','aria-label':'新學生的座號或暱稱',placeholder:'座號或暱稱',value:nd.name,oninput:e=>{nd.name=e.target.value;}}),
+        h('input',{class:'in tp',id:'new-topic',type:'text','aria-label':'新學生的題目',placeholder:'專題題目（可以之後再填）',value:nd.topic,oninput:e=>{nd.topic=e.target.value;}}),
+        select(typeOpts,nd.type,{class:'in ty',id:'new-type','aria-label':'專題類型',onchange:e=>{nd.type=e.target.value;}}),
+        h('button',{class:'btn small',type:'button',onclick:addStudent},'新增學生')))));
+
+  const nPlans=studs.filter(x=>S.plans[x.id]&&S.plans[x.id].weeks).length;
+  root.append(importPanel());
+  if(nPlans) root.append(h('p',{class:'hint',text:'已放入 '+nPlans+' 位學生的企畫書每週目標，填寫週報和總覽都會顯示。要修改目標，重新匯入班級資料即可。'}));
+  root.append(h('p',{class:'hint'},'資料存在您自己的 Firebase 資料庫。',
+    S.confirm==='reset'
+      ?h('span',{class:'row'},h('span',{class:'err',text:'這台裝置會忘記班級連結，資料庫裡的資料不會刪除。'}),h('button',{class:'btn small danger',type:'button',onclick:resetConn},'確定'),h('button',{class:'btn small ghost',type:'button',onclick:()=>{S.confirm=null;render();}},'取消'))
+      :h('button',{class:'linkbtn',type:'button',onclick:()=>{S.confirm='reset';render();}},'讓這台裝置忘記這個班級')));
+  return root;
+}
+function rosterRow(s,typeOpts){
+  const base={name:s.name||'',topic:s.topic||'',type:s.type||TYPES[0]};
+  const d=Object.assign({},base,S.rosterDraft[s.id]);
+  const set=(k,v)=>{S.rosterDraft[s.id]=Object.assign({},base,S.rosterDraft[s.id],{[k]:v});};
+  const asking=S.confirm==='del:'+s.id;
+  return h('div',{class:'rrow'},
+    h('input',{class:'in nm',id:'rn-'+s.id,type:'text','aria-label':'座號或暱稱',value:d.name,oninput:e=>set('name',e.target.value)}),
+    h('input',{class:'in tp',id:'rt-'+s.id,type:'text','aria-label':'專題題目',value:d.topic,oninput:e=>set('topic',e.target.value)}),
+    select(typeOpts,d.type,{class:'in ty',id:'ry-'+s.id,'aria-label':'專題類型',onchange:e=>set('type',e.target.value)}),
+    s.demo?h('span',{class:'tag',text:'示範'}):null,
+    asking?[
+      h('span',{class:'err',text:'會一併刪除他的所有週報。'}),
+      h('button',{class:'btn small danger',type:'button',onclick:()=>deleteStudent(s)},'確定刪除'),
+      h('button',{class:'btn small ghost',type:'button',onclick:()=>{S.confirm=null;render();}},'取消')
+    ]:[
+      h('button',{class:'btn small',type:'button',onclick:()=>saveStudent(s)},'儲存'),
+      h('button',{class:'btn small ghost',type:'button',onclick:()=>{S.confirm='del:'+s.id;render();}},'刪除')
+    ]);
+}
+async function saveSettings(){
+  const sd=S.settingsDraft;if(!sd) return;
+  const doc={className:(sd.className||'').trim()||DEFAULTS.className,termStart:/^\d{4}-\d{2}-\d{2}$/.test(sd.termStart)?sd.termStart:DEFAULTS.termStart};
+  const ok=await save('settings/main',()=>S.db.doc('settings/main').update(doc),'已儲存設定');
+  if(ok){S.settings=Object.assign({},S.settings,doc);S.settingsDraft=null;scheduleRender();}
+}
+async function saveStudent(s){
+  const d=S.rosterDraft[s.id];
+  if(!d){toast('沒有需要儲存的變更');return;}
+  if(!d.name.trim()){toast('座號或暱稱不能空白。',true);return;}
+  const ok=await save('students/'+s.id,()=>S.db.doc('students/'+s.id).update({name:d.name.trim(),topic:d.topic.trim(),type:d.type}),'已儲存 '+d.name.trim());
+  if(ok){delete S.rosterDraft[s.id];scheduleRender();}
+}
+async function addStudent(){
+  const nd=S.newStudent,name=nd.name.trim();
+  if(!name){toast('請先填座號或暱稱。',true);return;}
+  if(S.students.some(s=>s.name===name)){toast('已經有同名的學生，請換一個稱呼。',true);return;}
+  const id='s'+Date.now().toString(36);
+  const order=S.students.reduce((m,s)=>Math.max(m,s.order||0),0)+1;
+  const ok=await save('students/'+id,()=>S.db.doc('students/'+id).set({name:name,topic:nd.topic.trim(),type:nd.type,order:order}),'已新增 '+name);
+  if(ok){S.newStudent={name:'',topic:'',type:TYPES[0]};scheduleRender();}
+}
+async function deleteStudent(s){
+  S.confirm=null;
+  const reps=S.reports.filter(r=>r.sid===s.id);
+  try{
+    for(const r of reps) await write('reports/'+r.id,()=>S.db.doc('reports/'+r.id).delete());
+    if(S.plans[s.id]) await write('plans/'+s.id,()=>S.db.doc('plans/'+s.id).delete());
+    await write('students/'+s.id,()=>S.db.doc('students/'+s.id).delete());
+    delete S.rosterDraft[s.id];
+    toast('已刪除 '+s.name);
+  }catch(e){toast(errCopy(e),true);}
+  scheduleRender();
+}
+async function clearDemo(){
+  S.confirm=null;renderChrome();
+  const reps=S.reports.filter(r=>r.demo),studs=S.students.filter(s=>s.demo);
+  try{
+    for(const r of reps) await write('reports/'+r.id,()=>S.db.doc('reports/'+r.id).delete());
+    for(const s of studs) await write('students/'+s.id,()=>S.db.doc('students/'+s.id).delete());
+    toast(studs.length?'示範資料已清除，可以開始輸入自己的班級。':'示範週報已清除，可以開始填真正的週報。');
+  }catch(e){toast(errCopy(e),true);}
+  scheduleRender();
+}
+
+/* ---------- 外框與切換 ---------- */
+function renderChrome(){
+  $('className').textContent=S.settings.className||DEFAULTS.className;
+  $('weekNo').textContent=weekTitle(S.week);
+  $('weekRange').textContent=weekRange(S.week);
+  $('thisWeek').hidden=S.week===THIS_WEEK;
+  const setup=S.dbState==='setup';
+  document.querySelector('.tabs').hidden=setup;
+  $('weekbar').hidden=setup||!(S.tab==='overview'||S.tab==='form');
+  $('weekTag').hidden=!isCheckWeek(S.week);
+  document.querySelectorAll('.tabs button').forEach(b=>{
+    b.hidden=!S.isTeacher&&(b.dataset.tab==='overview'||b.dataset.tab==='roster');
+    if(b.dataset.tab==='history') b.textContent=S.isTeacher?'個人歷程':'我的歷程';
+    if(b.dataset.tab===S.tab) b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+  });
+  const banner=$('banner');
+  const demoStudents=S.students.some(s=>s.demo);
+  const hasDemo=demoStudents||S.reports.some(r=>r.demo);
+  banner.hidden=!hasDemo||S.dbState!=='ok'||!S.isTeacher;
+  if(!banner.hidden){
+    banner.replaceChildren(
+      h('span',{text:demoStudents?'現在看到的是示範資料（標有「示範」的學生都是虛構的）。開始正式使用前請先清除。':'名單、題目和每週目標是班上的真實資料；標有「示範週報」的週報內容是示範用的，不是學生寫的。正式使用前請先清除。'}),
+      S.confirm==='demo'
+        ?h('span',{class:'row'},h('button',{class:'btn small danger',type:'button',onclick:clearDemo},'確定清除'),h('button',{class:'btn small ghost',type:'button',onclick:()=>{S.confirm=null;renderChrome();}},'取消'))
+        :h('button',{class:'btn small ghost',type:'button',onclick:()=>{S.confirm='demo';renderChrome();}},demoStudents?'清除示範資料':'清除示範週報'));
+  }
+}
+function render(){
+  if(!S.isTeacher&&(S.tab==='overview'||S.tab==='roster')) S.tab='form';
+  renderChrome();
+  let node;
+  if(S.dbState==='setup') node=viewSetup();
+  else if(S.dbState==='loading') node=h('div',{class:'panel empty'},h('h2',{text:'讀取週報資料中'}),h('p',{text:'這裡會列出每位學生本週的進度、遇到的問題、下週計畫，以及需要準備的材料。'}));
+  else if(S.dbState==='none') node=h('div',{class:'panel empty'},h('h2',{text:'現在連不上資料庫'}),h('p',{text:'請檢查網路後重新整理。如果一直連不上，請告訴老師。'}));
+  else node=(S.tab==='form'?viewForm:S.tab==='history'?viewHistory:S.tab==='roster'?viewRoster:viewOverview)();
+  view.replaceChildren(node);
+}
+function go(tab){
+  if(TABS.indexOf(tab)<0) tab='overview';
+  if(!S.isTeacher&&(tab==='overview'||tab==='roster')) tab='form';
+  if(S.tab==='roster'&&tab!=='roster'){S.settingsDraft=null;S.rosterDraft={};}
+  S.tab=tab;S.confirm=null;S.copyFallback='';S.digestFallback='';S.linkFallback='';
+  try{localStorage.setItem('wrs-tab',tab);}catch(e){}
+  render();
+}
+function setWeek(w){
+  S.week=w;S.copyFallback='';
+  if(S.tab==='form'&&S.form&&S.form.sid) loadForm(S.form.sid);
+  render();
+}
+document.querySelector('.tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(b) go(b.dataset.tab);});
+$('prevWeek').addEventListener('click',()=>setWeek(addDays(S.week,-7)));
+$('nextWeek').addEventListener('click',()=>setWeek(addDays(S.week,7)));
+$('thisWeek').addEventListener('click',()=>setWeek(THIS_WEEK));
+
+/* ---------- 連線到資料 ---------- */
+function subscribe(){
+  const got={s:false,r:false};
+  const settle=()=>{if(got.s&&got.r&&S.dbState!=='ok') S.dbState='ok';scheduleRender();};
+  const fail=()=>{S.dbState='none';scheduleRender();};
+  const fresh=snap=>!(snap.empty&&snap.metadata&&snap.metadata.fromCache);
+  S.db.collection('students').onSnapshot(snap=>{
+    S.students=snap.docs.map(d=>Object.assign({},d.data(),{id:d.id}));
+    if(fresh(snap)) got.s=true;settle();
+  },fail);
+  S.db.collection('reports').limit(1000).onSnapshot(snap=>{
+    S.reports=snap.docs.map(d=>Object.assign({},d.data(),{id:d.id}));
+    if(fresh(snap)) got.r=true;settle();
+  },fail);
+  S.db.collection('plans').onSnapshot(snap=>{
+    const m={};snap.docs.forEach(d=>{m[d.id]=d.data();});
+    S.plans=m;scheduleRender();
+  },()=>{});
+  S.db.doc('settings/main').onSnapshot(snap=>{
+    if(snap.exists) S.settings=Object.assign({},DEFAULTS,snap.data());
+    if(S.conn&&S.conn.t&&S.settings.teacherHash){
+      sha256(S.conn.t).then(hh=>{const ok=hh===S.settings.teacherHash;if(ok!==S.isTeacher){S.isTeacher=ok;scheduleRender();}},()=>{});
+    }else if(snap.exists&&S.isTeacher&&!S.settings.teacherHash){S.isTeacher=false;}
+    scheduleRender();
+  },()=>{});
+  setTimeout(()=>{if(S.dbState==='loading'){got.s=got.r=true;settle();}},5000);
+}
+function start(){
+  let tab='';
+  try{tab=localStorage.getItem('wrs-tab')||'';S.me=localStorage.getItem(LS_ME)||'';}catch(e){}
+  S.conn=readConn();
+  if(!S.conn){S.dbState='setup';render();return;}
+  S.isTeacher=!!S.conn.t;
+  S.tab=S.isTeacher?(TABS.indexOf(tab)>=0?tab:'overview'):(tab==='history'?'history':'form');
+  render();
+  try{S.db=openDb(S.conn);}catch(e){S.dbState='none';render();return;}
+  subscribe();
+}
+/* ---------- 連線設定：資料存在老師自己的 Firebase ---------- */
+const LS_CONN='wrs-conn',LS_ME='wrs-me';
+const RULES=[
+  "rules_version = '2';",
+  "service cloud.firestore {",
+  "  match /databases/{database}/documents {",
+  "    match /classes/{classId}/{coll}/{docId} {",
+  "      allow read, write: if true;",
+  "    }",
+  "  }",
+  "}"].join('\n');
+const b64e=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const b64d=s=>JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g,'+').replace(/_/g,'/')))));
+const okCfg=c=>!!(c&&typeof c==='object'&&c.apiKey&&c.projectId);
+const okId=v=>typeof v==='string'&&/^[a-z0-9]{8,40}$/.test(v);
+const fixedCfg=()=>okCfg(window.WRS_CONFIG)?window.WRS_CONFIG:null;
+function rand(n){
+  const a=new Uint8Array(n);crypto.getRandomValues(a);
+  return Array.from(a).map(b=>'abcdefghijkmnpqrstuvwxyz23456789'[b%32]).join('');
+}
+async function sha256(text){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function withTimeout(p,ms){
+  return new Promise((res,rej)=>{
+    const t=setTimeout(()=>rej({code:'timeout'}),ms);
+    p.then(v=>{clearTimeout(t);res(v);},e=>{clearTimeout(t);rej(e);});
+  });
+}
+function rememberMe(id){S.me=id;try{localStorage.setItem(LS_ME,id);}catch(e){}}
+function readConn(){
+  let stored=null,fromLink=null;
+  try{stored=JSON.parse(localStorage.getItem(LS_CONN)||'null');}catch(e){}
+  if(!(stored&&okCfg(stored.cfg)&&okId(stored.cid))) stored=null;
+  const hash=location.hash||'';
+  const k=hash.match(/[#&]k=([A-Za-z0-9_-]+)/),c=hash.match(/[#&]c=([a-z0-9]+)/),t=hash.match(/[#&]t=([a-z0-9]+)/);
+  try{
+    if(k){const o=b64d(k[1]);if(o&&okCfg(o.cfg)&&okId(o.cid)) fromLink={cfg:o.cfg,cid:o.cid,t:okId(o.t)?o.t:''};}
+    else if(c&&okId(c[1])&&fixedCfg()) fromLink={cfg:fixedCfg(),cid:c[1],t:t&&okId(t[1])?t[1]:''};
+  }catch(e){}
+  if(fromLink){
+    if(!fromLink.t&&stored&&stored.cid===fromLink.cid&&stored.t) fromLink.t=stored.t;
+    let kept=false;
+    try{localStorage.setItem(LS_CONN,JSON.stringify(fromLink));kept=true;}catch(e){}
+    if(kept){try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}}
+    return fromLink;
+  }
+  return stored;
+}
+function linkFor(conn,teacher){
+  const base=location.origin+location.pathname;
+  if(fixedCfg()) return base+'#c='+conn.cid+(teacher&&conn.t?'&t='+conn.t:'');
+  const o={cfg:conn.cfg,cid:conn.cid};
+  if(teacher&&conn.t) o.t=conn.t;
+  return base+'#k='+b64e(o);
+}
+function openDb(conn){
+  if(!window.firebase||typeof firebase.firestore!=='function') throw {code:'no-sdk'};
+  const app=firebase.apps.length?firebase.app():firebase.initializeApp(conn.cfg);
+  const fs=firebase.firestore(app);
+  const root='classes/'+conn.cid+'/';
+  return {doc:p=>fs.doc(root+p),collection:p=>fs.collection(root+p)};
+}
+function parseCfg(text){
+  const out={};
+  ['apiKey','authDomain','projectId','storageBucket','messagingSenderId','appId'].forEach(key=>{
+    const m=String(text||'').match(new RegExp('["\']?'+key+'["\']?\\s*:\\s*["\']([^"\']+)["\']'));
+    if(m) out[key]=m[1].trim();
+  });
+  return okCfg(out)?out:null;
+}
+function setupErr(e){
+  const c=e&&e.code;
+  if(c==='permission-denied') return '資料庫拒絕寫入。請確認第 3 步的規則已經貼上並按了「發布」，等一分鐘再試。';
+  if(c==='timeout') return '連不上資料庫。請確認第 2 步已經建立 Firestore 資料庫，而且設定是整段複製的。';
+  if(c==='no-sdk') return '資料庫元件沒有載入，請重新整理頁面再試。';
+  return '沒有成功'+(c?'（'+c+'）':'')+'。請確認設定是從 Firebase 整段複製的，再試一次。';
+}
+async function createClass(){
+  if(S.setupBusy) return;
+  const cfg=fixedCfg()||parseCfg(($('setup-cfg')||{}).value);
+  const name=(($('setup-class')||{}).value||'').trim();
+  if(!cfg){S.setupMsg='看不懂這段設定。請把 firebaseConfig = { … } 整段複製貼上。';render();return;}
+  const conn={cfg:cfg,cid:rand(20),t:rand(24)};
+  S.setupBusy=true;S.setupMsg='';S.setupDraft={cfg:($('setup-cfg')||{}).value||'',name:name};render();
+  try{
+    const db=openDb(conn);
+    const hash=await sha256(conn.t);
+    await withTimeout(db.doc('settings/main').set({className:name||DEFAULTS.className,termStart:THIS_WEEK,teacherHash:hash,createdAt:new Date().toISOString()}),15000);
+    try{localStorage.setItem(LS_CONN,JSON.stringify(conn));localStorage.setItem('wrs-tab','roster');}
+    catch(e){location.hash='k='+b64e(conn);}
+    location.reload();
+  }catch(e){
+    S.setupBusy=false;S.setupMsg=setupErr(e);render();
+  }
+}
+function viewSetup(){
+  const d=S.setupDraft||{cfg:'',name:''};
+  const fixed=!!fixedCfg();
+  const steps=h('ol',{class:'steps'},
+    h('li',null,'用 Google 帳號開啟 ',h('a',{href:'https://console.firebase.google.com/',target:'_blank',rel:'noopener'},'Firebase 主控台'),'，建立一個專案。名稱自訂，Google Analytics 可以關掉。'),
+    h('li',{text:'在左側選單找到 Firestore，按「建立資料庫」。位置選 asia-east1（臺灣），模式選正式版。'}),
+    h('li',null,'到 Firestore 的「規則」分頁，把內容整段換成下面這段，按「發布」。',
+      h('pre',{class:'code',id:'rules-text',text:RULES}),
+      h('div',{class:'row'},h('button',{class:'btn small ghost',type:'button',onclick:()=>copyText(RULES,'已複製規則','rulesFallback')},'複製規則'))),
+    h('li',{text:'到「專案設定」的「您的應用程式」，新增一個網頁應用程式（圖示是 </>）。註冊後畫面會出現 firebaseConfig，整段複製。'}),
+    h('li',{text:'貼到下面，按「連線並建立班級」。'}));
+  return h('div',{class:'form'},
+    h('section',{class:'q'},
+      h('h2',{class:'ql',text:'學生請看這裡'}),
+      h('p',{text:'這個網址還少了班級的鑰匙。請向老師要「學生連結」再打開，不用在這一頁輸入任何東西。'})),
+    h('section',{class:'q'},
+      h('h2',{class:'ql',text:'老師第一次使用：連接資料庫'}),
+      h('p',{text:'週報會存在老師自己的 Firebase 資料庫（免費方案就夠用）。設定一次，之後把學生連結給全班，大家就能在自己的裝置上同時填寫。'}),
+      fixed?h('p',{class:'hint',text:'這個網站已經內建資料庫設定，直接建立班級即可。'}):steps,
+      fixed?null:h('label',{class:'fl',for:'setup-cfg',text:'貼上 firebaseConfig'}),
+      fixed?null:h('textarea',{class:'in mono',id:'setup-cfg',rows:8,placeholder:'const firebaseConfig = {\n  apiKey: "…",\n  authDomain: "…",\n  projectId: "…",\n  …\n};',value:d.cfg,oninput:e=>{S.setupDraft=Object.assign({},S.setupDraft||{cfg:'',name:''},{cfg:e.target.value});}}),
+      h('label',{class:'fl',for:'setup-class',text:'班級名稱'}),
+      h('input',{class:'in',id:'setup-class',type:'text',placeholder:'例：六年級資優班',value:d.name,oninput:e=>{S.setupDraft=Object.assign({},S.setupDraft||{cfg:'',name:''},{name:e.target.value});}}),
+      h('div',{class:'row'},
+        h('button',{class:'btn',type:'button',disabled:S.setupBusy,onclick:createClass},S.setupBusy?'連線中…':'連線並建立班級'),
+        S.setupMsg?h('span',{class:'err',role:'alert',text:S.setupMsg}):null)));
+}
+
+/* ---------- 分享連結與班級資料匯入（老師） ---------- */
+function linksPanel(){
+  const sl=linkFor(S.conn,false),tl=linkFor(S.conn,true);
+  const row=(id,label,url,note,key)=>h('div',{class:'linkrow'},
+    h('label',{class:'fl',for:id,text:label}),
+    h('div',{class:'row'},
+      h('input',{class:'in mono grow',id:id,type:'text',readonly:true,value:url,onfocus:e=>e.target.select()}),
+      h('button',{class:'btn small',type:'button',onclick:()=>copyText(url,'已複製'+label,key)},'複製')),
+    h('p',{class:'hint',text:note}));
+  return h('section',{class:'panel'},
+    h('div',{class:'ph'},h('h2',{text:'分享連結'}),h('span',{class:'sub',text:'連結就是鑰匙'})),
+    h('div',{class:'pb'},
+      row('link-student','學生連結',sl,'給全班。學生打開後可以填寫週報、看自己的歷程和老師的回覆，看不到全班總覽和名單設定。','linkFallback'),
+      row('link-teacher','老師連結',tl,'自己留著，換裝置時用。有這個連結的人可以改名單、回覆和所有週報。','linkFallback'),
+      S.linkFallback?h('textarea',{class:'in mono',id:'linkFallback',rows:3,readonly:true,'aria-label':'連結文字，請手動複製',value:S.linkFallback}):null,
+      h('p',{class:'hint',text:'拿到學生連結的人都能讀寫這個班的週報，所以名單請用代稱，不要輸入姓名、電話、住址。'})));
+}
+function importPanel(){
+  return h('section',{class:'panel'},
+    h('div',{class:'ph'},h('h2',{text:'匯入班級資料'}),h('span',{class:'sub',text:'名單、題目與每週目標'})),
+    h('div',{class:'pb'},
+      h('p',{class:'hint',text:'選擇 Claude 給的班級資料檔（.json）。同一位學生會被新資料覆蓋，已經填的週報不會動。'}),
+      h('input',{class:'in',id:'import-file',type:'file',accept:'.json,application/json','aria-label':'班級資料檔',onchange:e=>{const f=e.target.files&&e.target.files[0];if(f) importFile(f);}}),
+      S.importMsg?h('p',{class:S.importBad?'err':'hint',role:'status',text:S.importMsg}):null));
+}
+function importFile(file){
+  const fr=new FileReader();
+  fr.onerror=()=>{S.importBad=true;S.importMsg='讀不到這個檔案。';scheduleRender();};
+  fr.onload=()=>{
+    let data=null;
+    try{data=JSON.parse(String(fr.result||''));}catch(e){}
+    importClass(data);
+  };
+  fr.readAsText(file);
+}
+async function importClass(data){
+  if(!data||typeof data!=='object'||!data.students||typeof data.students!=='object'){
+    S.importBad=true;S.importMsg='這不是班級資料檔。';scheduleRender();return;
+  }
+  const studs=Object.keys(data.students).filter(okDocId),plans=data.plans&&typeof data.plans==='object'?data.plans:{};
+  S.importBad=false;S.importMsg='匯入中…';scheduleRender();
+  try{
+    if(data.settings&&typeof data.settings==='object'){
+      const up={};
+      if(typeof data.settings.className==='string'&&data.settings.className.trim()) up.className=data.settings.className.trim();
+      if(/^\d{4}-\d{2}-\d{2}$/.test(data.settings.termStart||'')) up.termStart=data.settings.termStart;
+      if(Object.keys(up).length) await write('settings/main',()=>S.db.doc('settings/main').update(up));
+    }
+    let n=0;
+    for(const id of studs){
+      const s=data.students[id]||{};
+      const doc={name:String(s.name||'').trim()||id,topic:String(s.topic||'').trim(),type:TYPES.indexOf(s.type)>=0?s.type:TYPES[0],order:Number(s.order)||(++n)};
+      await write('students/'+id,()=>S.db.doc('students/'+id).set(doc));
+      const p=plans[id];
+      if(p&&p.weeks&&typeof p.weeks==='object'){
+        const weeks={};
+        Object.keys(p.weeks).forEach(wn=>{const w=p.weeks[wn]||{};if(/^\d{1,2}$/.test(wn)&&w.goal) weeks[wn]={goal:String(w.goal),out:String(w.out||''),check:!!w.check};});
+        await write('plans/'+id,()=>S.db.doc('plans/'+id).set({weeks:weeks}));
+      }
+    }
+    S.settingsDraft=null;S.rosterDraft={};
+    S.importMsg='已匯入 '+studs.length+' 位學生。';
+  }catch(e){S.importBad=true;S.importMsg=errCopy(e);}
+  scheduleRender();
+}
+const okDocId=v=>/^[A-Za-z0-9_-]{1,40}$/.test(v);
+function resetConn(){
+  try{localStorage.removeItem(LS_CONN);localStorage.removeItem('wrs-tab');}catch(e){}
+  location.hash='';location.reload();
+}
+
+start();
+})();
+</script>
+</body>
+</html>
